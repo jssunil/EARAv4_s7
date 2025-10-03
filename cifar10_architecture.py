@@ -88,20 +88,10 @@ class CIFAR10_C1C2C3C40(nn.Module):
 
     def forward(self, x):
         x = self.c1(x)
-        z = self.convblock1(x)
-        z = self.convblock2(z)
-        z = self.transitionblock1(z)
-        z = F.relu(z)
-        z = self.convblock3(z)
-
-        y = self.convblock4(z)
-        y = self.convblock5(y)
-        y = self.transitionblock2(y)
-        y = F.relu(y)
-        y = self.convblock6(y)
-
-        y = self.convblock7(y)
-        y = self.output(y)
-        y = y.view(-1, 10)
-
-        return F.log_softmax(y, dim=-1)
+        x = self.c2(x)
+        x = self.c3(x)
+        x = self.c40(x)
+        x = self.gap(x)
+        x = self.classifier(x)
+        x = x.view(x.size(0), -1)
+        return F.log_softmax(x, dim=-1)
