@@ -5,6 +5,7 @@ A deep learning project for classifying images from the CIFAR-10 dataset using a
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [CIFAR-10 Dataset Overview](#cifar-10-dataset-overview)
 - [Features](#features)
 - [Project Structure](#project-structure)
 - [Installation](#installation)
@@ -25,9 +26,78 @@ This project implements a sophisticated CNN for CIFAR-10 image classification, a
 - Comprehensive visualization and analysis tools
 - Modular code architecture for maintainability
 
-The CIFAR-10 dataset consists of 60,000 32x32 color images in 10 classes: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck.
+The project focuses on the **CIFAR-10 dataset**, a fundamental benchmark in computer vision that consists of 60,000 32x32 color images in 10 balanced classes: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck. Each class contains exactly 6,000 images (5,000 for training, 1,000 for testing).
 
-## ✨ Features
+## 📊 CIFAR-10 Dataset Overview
+
+### Dataset Characteristics
+
+The CIFAR-10 dataset is a collection of 60,000 32×32 color images in 10 mutually exclusive classes. It serves as a fundamental benchmark for image classification tasks and is widely used in computer vision research.
+
+#### Key Statistics
+- **Total Images**: 60,000
+- **Training Set**: 50,000 images (83.3%)
+- **Test Set**: 10,000 images (16.7%)
+- **Image Dimensions**: 32×32 pixels
+- **Color Channels**: 3 (RGB)
+- **Classes**: 10 balanced categories
+- **Images per Class**: 6,000 (5,000 train + 1,000 test)
+- **Dataset Size**: ~170 MB
+
+#### Class Distribution
+All classes are perfectly balanced with exactly 10% representation in both training and test sets:
+
+| Class | Training Images | Test Images | Total |
+|-------|----------------|-------------|-------|
+| **Airplane** | 5,000 | 1,000 | 6,000 |
+| **Automobile** | 5,000 | 1,000 | 6,000 |
+| **Bird** | 5,000 | 1,000 | 6,000 |
+| **Cat** | 5,000 | 1,000 | 6,000 |
+| **Deer** | 5,000 | 1,000 | 6,000 |
+| **Dog** | 5,000 | 1,000 | 6,000 |
+| **Frog** | 5,000 | 1,000 | 6,000 |
+| **Horse** | 5,000 | 1,000 | 6,000 |
+| **Ship** | 5,000 | 1,000 | 6,000 |
+| **Truck** | 5,000 | 1,000 | 6,000 |
+
+### Sample Images
+
+Below are representative examples from each of the 10 CIFAR-10 classes:
+
+![CIFAR-10 Sample Images](cifar10_samples.png)
+
+*Sample images from all 10 CIFAR-10 classes showing the diversity and complexity of the dataset.*
+
+### Multiple Examples from Selected Classes
+
+To better illustrate the variety within each class, here are multiple examples from three representative classes:
+
+![Multiple Examples](cifar10_multiple_examples.png)
+
+*Multiple examples from Airplane, Automobile, and Bird classes showing intra-class diversity.*
+
+### Dataset Challenges
+
+The CIFAR-10 dataset presents several interesting challenges for machine learning models:
+
+1. **Low Resolution**: 32×32 pixels provide limited detail, making fine-grained classification difficult
+2. **Small Objects**: Many objects occupy only a small portion of the image
+3. **Varied Backgrounds**: Images contain diverse backgrounds that may not be relevant to classification
+4. **Class Similarities**: Some classes (e.g., cat vs. dog, truck vs. automobile) have overlapping visual features
+5. **Lighting Variations**: Images exhibit different lighting conditions and angles
+6. **Occlusion**: Objects may be partially obscured or at unusual angles
+
+### Data Preprocessing
+
+Our implementation uses standardized preprocessing:
+
+- **Normalization**: Channel-wise normalization using CIFAR-10 statistics
+  - Mean: (0.4914, 0.4822, 0.4465)
+  - Std: (0.2023, 0.1994, 0.2010)
+- **Data Augmentation**: Advanced transformations during training
+- **Tensor Conversion**: Images converted to PyTorch tensors for efficient processing
+
+## ✨ Key Features
 
 - **Custom C1C2C3C40 Architecture**: Novel network design with three 3x3 stride-2 downsampling layers
 - **Advanced Convolution Types**: Depthwise separable convolutions and dilated convolutions
@@ -52,6 +122,9 @@ s7/
 ├── trainer.py                   # Training and testing utilities
 ├── metrics.py                   # Evaluation metrics
 ├── visualization.py             # Visualization tools
+├── generate_sample_images.py    # Script to generate CIFAR-10 sample images
+├── cifar10_samples.png          # Sample images from all 10 classes
+├── cifar10_multiple_examples.png # Multiple examples from selected classes
 └── erav4_s7_sjk_nb.ipynb       # Jupyter notebook for experimentation
 ```
 
@@ -96,23 +169,36 @@ Architecture: C1 → C2 → C3 → C40
 
 ## 🔄 Data Augmentation
 
-The project uses Albumentations for sophisticated data augmentation:
+The project uses Albumentations for sophisticated data augmentation, crucial for the small CIFAR-10 images:
 
 ### Training Augmentations
 
 - **Horizontal Flip**: Random horizontal flipping (50% probability)
+  - *Rationale*: Many objects (animals, vehicles) are naturally symmetric
 - **Shift Scale Rotate**: Random geometric transformations (50% probability)
+  - *Benefit*: Improves robustness to object positioning and scale variations
 - **Coarse Dropout**: Random rectangular region masking
   - `max_holes=1, max_height=16px, max_width=1px`
   - `min_holes=1, min_height=16px, min_width=16px`
   - `fill_value=dataset_mean` for proper normalization
+  - *Purpose*: Simulates occlusion and forces model to focus on multiple image regions
 - **Normalization**: Channel-wise normalization using CIFAR-10 statistics
+  - *Critical*: Essential for stable training with small images
+
+### Why Data Augmentation is Crucial for CIFAR-10
+
+1. **Limited Data**: 50,000 training images is relatively small for deep learning
+2. **Small Image Size**: 32×32 pixels provide limited spatial information
+3. **Class Imbalance Prevention**: Augmentation helps prevent overfitting to specific image characteristics
+4. **Robustness**: Model learns to handle real-world variations in object appearance
+5. **Performance Boost**: Typically improves accuracy by 2-5% on CIFAR-10
 
 ### Benefits
 
 - **Improved Generalization**: Reduces overfitting through data diversity
 - **Better Performance**: Increases effective dataset size
 - **Robustness**: Model learns to handle various image variations
+- **Real-world Applicability**: Better performance on unseen data with different lighting/angles
 
 ## 📊 Training Results
 
